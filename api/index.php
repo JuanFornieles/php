@@ -14,17 +14,16 @@
 </head>
 <body>
 
-<!-- Header de XLX (Tu diseño exacto) -->
 <header style="background: #111; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #4CAF50;">
     <div style="display: flex; align-items: center; gap: 15px;">
-        <img src="/imagenes/logos/logo_1.png" alt="XLX Logo" style="height: 40px; border-radius: 4px;">
+        <img src="/imagenes/logos/logo_1.png" alt="XLX" style="height: 40px; border-radius: 4px;">
         <span style="font-size: 22px; font-weight: bold; letter-spacing: 1px;">XLX</span>
     </div>
     <nav style="display: flex; align-items: center; gap: 25px;">
-        <a href="/docus-xlx.php" style="color: #fff; text-decoration: none; font-size: 14px;">Documentación XLX</a>
+        <a href="/docus-xlx.php?=<?php echo $rnd; ?>" style="color: #fff; text-decoration: none; font-size: 14px;">Documentación XLX</a>
         <?php $rnd = rand(1000, 9999); ?>
         <a href="/que-es.php?rndval=<?php echo $rnd; ?>" style="color: #bbb; text-decoration: none; font-size: 14px;">¿Qué es XLX?</a>
-        <a href="/prueba.php" style="background: #4CAF50; color: white; text-decoration: none; padding: 8px 16px; border-radius: 5px; font-weight: bold; font-size: 14px;">EDITOR XLX</a>
+        <a href="/prueba.php?rndval=<?php echo $rnd; ?>&ALEATORIO=<?php echo $rnd; ?>" style="background: #4CAF50; color: white; text-decoration: none; padding: 8px 16px; border-radius: 5px; font-weight: bold; font-size: 14px;">EDITOR XLX</a>
     </nav>
 </header>
 
@@ -32,7 +31,6 @@
     <h1>Guía de Etiquetas XLX</h1>
     <p>Aprende a programar tu web de forma sencilla y en español usando estas etiquetas:</p>
 
-    <!-- Ejemplo de tarjeta de etiqueta -->
     <div class="tag-card">
         <strong>Etiqueta:</strong> <code>&lt;titulo&gt;...&lt;titulo&gt;</code><br>
         <span>Define el título de la pestaña y crea un encabezado principal en la página.</span>
