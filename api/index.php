@@ -1,83 +1,67 @@
-<?php
-$resultado_final = "";
-$codigo_usuario = isset($_POST['codigo']) ? $_POST['codigo'] : "<titulo>Mi Web XLX</titulo>\n<texto>Escribe aquí en español</texto>";
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $code = $_POST['codigo'];
-
-    // 1️⃣ Procesar sección estilo (Tu lógica exacta de fondo y letra)
-    $css = "";
-    if (preg_match_all('/<estilo_abrir>(.*?)<estilo_cerrar>/s', $code, $estilos)) {
-        foreach ($estilos[1] as $bloque) {
-            foreach (explode("\n", $bloque) as $linea) {
-                if (strpos($linea, '=') !== false) {
-                    list($prop, $valor) = explode('=', $linea);
-                    $prop = trim($prop); $valor = trim($valor);
-                    if ($prop == "fondo") $css .= "body { background-color: $valor; }\n";
-                    elseif ($prop == "letra") $css .= "body { font-family: $valor; }\n";
-                }
-            }
-        }
-    }
-
-    // 2️⃣ Procesar sección JS global
-    $js = "";
-    if (preg_match_all('/<js_abrir>(.*?)<js_cerrar>/s', $code, $js_blocks)) {
-        foreach ($js_blocks[1] as $bloque) { $js .= $bloque . "\n"; }
-    }
-
-    // 3️⃣ Procesar etiquetas normales (Tu sintaxis <tag>...</tag>)
-    preg_match_all('/<(\w+)>(.*?)<\1>/s', $code, $matches, PREG_SET_ORDER);
-    
-    $html_body = "";
-    foreach ($matches as $m) {
-        $tag = $m[1]; $content = $m[2];
-        if (in_array($tag, ["estilo_abrir", "estilo_cerrar", "js_abrir", "js_cerrar"])) continue;
-        
-        switch($tag) {
-            case "titulo": $html_body .= "<title>$content</title><h1>$content</h1>\n"; break;
-            case "texto": $html_body .= "<p>$content</p>\n"; break;
-            case "subrayado": $html_body .= "<u>$content</u>\n"; break;
-            case "grande": $html_body .= "<h1>$content</h1>\n"; break;
-            case "texto_2": $html_body .= "<h2>$content</h2>\n"; break;
-            case "texto_3": $html_body .= "<h3>$content</h3>\n"; break;
-            case "texto_inaudible": $html_body .= "<h4>$content</h4>\n"; break;
-            case "imagen": $html_body .= "<img src='".trim($content)."' style='max-width:100%;'>\n"; break;
-            case "boton":
-                if (strpos(trim($content), 'http') === 0) {
-                    $html_body .= "<button onclick=\"window.open('".trim($content)."', '_blank')\">$content</button>\n";
-                } else {
-                    $html_body .= "<button onclick=\"$content\">$content</button>\n";
-                }
-                break;
-            case "enlace_externo": $html_body .= "<a href='".trim($content)."' target='_blank'>$content</a>\n"; break;
-            case "alerta": $html_body .= "<script>alert('$content');</script>\n"; break;
-            case "muestra_estado": $html_body .= "<h2>Estado actual = funciona si no sabes entra en <u>https://guia-xlx.vercel.app</u></h2>\n"; break;
-            case "division": $html_body .= "<br><br>\n"; break;
-            case "separa_linea": $html_body .= "&nbsp;\n"; break;
-        }
-    }
-
-    $resultado_final = "<!DOCTYPE html><html><head><meta charset='UTF-8'>";
-    if ($css) $resultado_final .= "<style>$css</style>";
-    if ($js) $resultado_final .= "<script>$js</script>";
-    $resultado_final .= "</head><body>$html_body</body></html>";
-}
-?>
-
 <!DOCTYPE html>
-<html style="margin:0; height:100%; overflow:hidden;">
-    <TITILE>Ejecutor XLX</TITILE>
-<body style="margin:0; height:100%; display:flex; flex-direction:column; background:#1e1e1e; font-family:sans-serif;">
-    <div style="background:#333; color:white; padding:10px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #444;">
-        <span><b>XLX</b>Motor para XLX (php)</span>
-        <button type="submit" form="editorForm" style="background:#4CAF50; color:white; border:none; padding:8px 20px; cursor:pointer; border-radius:4px; font-weight:bold;">🚀 COMPILAR</button>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Documentación Oficial XLX</title>
+    <style>
+        body { margin: 0; background: #1e1e1e; color: #ddd; font-family: sans-serif; line-height: 1.6; }
+        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        h1 { color: #4CAF50; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .tag-card { background: #252526; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #4CAF50; }
+        code { background: #333; color: #4ec9b0; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 1.1em; }
+        .ejemplo { background: #111; color: #abb2bf; padding: 15px; border-radius: 5px; margin-top: 10px; font-family: monospace; display: block; white-space: pre; }
+    </style>
+</head>
+<body>
+
+<!-- Header de XLX (Tu diseño exacto) -->
+<header style="background: #111; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #4CAF50;">
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <img src="/imagenes/logos/logo_1.png" alt="XLX Logo" style="height: 40px; border-radius: 4px;">
+        <span style="font-size: 22px; font-weight: bold; letter-spacing: 1px;">XLX</span>
     </div>
-    <form id="editorForm" method="post" style="display:flex; flex:1; margin:0;">
-        <textarea name="codigo" style="width:50%; background:#252526; color:#d4d4d4; padding:20px; border:none; font-family:'Consolas', monospace; font-size:16px; outline:none; resize:none;"><?php echo htmlspecialchars($codigo_usuario); ?></textarea>
-        <div style="width:50%; background:white;">
-            <iframe srcdoc="<?php echo htmlspecialchars($resultado_final); ?>" style="width:100%; height:100%; border:none;"></iframe>
-        </div>
-    </form>
+    <nav style="display: flex; align-items: center; gap: 25px;">
+        <a href="/docus-xlx.php" style="color: #fff; text-decoration: none; font-size: 14px;">Documentación XLX</a>
+        <?php $rnd = rand(1000, 9999); ?>
+        <a href="/que-es.php?rndval=<?php echo $rnd; ?>" style="color: #bbb; text-decoration: none; font-size: 14px;">¿Qué es XLX?</a>
+        <a href="/prueba.php" style="background: #4CAF50; color: white; text-decoration: none; padding: 8px 16px; border-radius: 5px; font-weight: bold; font-size: 14px;">EDITOR XLX</a>
+    </nav>
+</header>
+
+<div class="container">
+    <h1>Guía de Etiquetas XLX</h1>
+    <p>Aprende a programar tu web de forma sencilla y en español usando estas etiquetas:</p>
+
+    <!-- Ejemplo de tarjeta de etiqueta -->
+    <div class="tag-card">
+        <strong>Etiqueta:</strong> <code>&lt;titulo&gt;...&lt;titulo&gt;</code><br>
+        <span>Define el título de la pestaña y crea un encabezado principal en la página.</span>
+        <div class="ejemplo">&lt;titulo&gt;Bienvenidos a mi web&lt;titulo&gt;</div>
+    </div>
+
+    <div class="tag-card">
+        <strong>Etiqueta:</strong> <code>&lt;alerta&gt;...&lt;alerta&gt;</code><br>
+        <span>Muestra una ventana emergente de aviso al cargar la página.</span>
+        <div class="ejemplo">&lt;alerta&gt;¡Hola Mundo!&lt;alerta&gt;</div>
+    </div>
+
+    <div class="tag-card">
+        <strong>Etiqueta:</strong> <code>&lt;imagen&gt;...&lt;imagen&gt;</code><br>
+        <span>Inserta una imagen pasando el enlace directo.</span>
+        <div class="ejemplo">&lt;imagen&gt;https://mi-web.com;</div>
+    </div>
+
+    <div class="tag-card">
+        <strong>Etiqueta:</strong> <code>&lt;estilo_abrir&gt;...&lt;estilo_cerrar&gt;</code><br>
+        <span>Sección para cambiar el diseño. Usa <code>fondo=color</code> o <code>letra=tipo</code>.</span>
+        <div class="ejemplo">
+&lt;estilo_abrir&gt;
+fondo = black
+letra = Arial
+&lt;estilo_cerrar&gt;</div>
+    </div>
+
+</div>
+
 </body>
 </html>
