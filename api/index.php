@@ -1,93 +1,73 @@
 <?php
-declare(strict_types=1);
+/**
+ * PHP God Mode en Vercel - Single File App
+ */
 
-// 1. CONFIGURACIÓN DE CABECERAS (CORS & JSON)
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-
-// 2. MIDDLEWARE DE RENDIMIENTO
+// --- 1. SETTINGS & MIDDLEWARE ---
+header("Content-Type: text/html; charset=UTF-8");
 $start = microtime(true);
 
-// 3. EL "CONTENEDOR" DE RUTAS (ROUTER MINI-FRAMEWORK)
-$router = [
-    'GET' => [],
-    'POST' => []
-];
+// --- 2. EL "MOTOR" (Funciones complejas integradas) ---
 
-// Función para registrar rutas
-$route = function(string $method, string $path, callable $handler) use (&$router) {
-    $router[$method][$path] = $handler;
-};
-
-// 4. DEFINICIÓN DE SERVICIOS (Lógica Compleja)
-
-// Servicio: Consultar múltiples APIs en paralelo (High Performance)
-$fetchParallel = function(array $urls) {
-    $mh = curl_multi_init();
-    $requests = [];
-    foreach ($urls as $i => $url) {
-        $requests[$i] = curl_init($url);
-        curl_setopt($requests[$i], CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($requests[$i], CURLOPT_TIMEOUT, 2);
-        curl_multi_add_handle($mh, $requests[$i]);
+// Generador de un patrón visual matemático (SVG)
+function generatePattern($seed) {
+    $svg = '<svg width="200" height="200" xmlns="http://www.w3.org">';
+    for ($i = 0; $i < 50; $i++) {
+        $x = hash('crc32', $seed . $i) % 200;
+        $y = hash('crc32', $i . $seed) % 200;
+        $color = substr(md5($seed . $i), 0, 6);
+        $svg .= "<circle cx='$x' cy='$y' r='5' fill='#$color' opacity='0.6' />";
     }
-    
-    $active = null;
-    do { $mrc = curl_multi_exec($mh, $active); } while ($mrc == CURLM_CALL_MULTI_PERFORM);
-    while ($active && $mrc == CURLM_OK) {
-        if (curl_multi_select($mh) != -1) {
-            do { $mrc = curl_multi_exec($mh, $active); } while ($mrc == CURLM_CALL_MULTI_PERFORM);
-        }
-    }
-
-    $results = [];
-    foreach ($requests as $i => $ch) {
-        $results[] = json_decode(curl_multi_getcontent($ch), true);
-        curl_multi_remove_handle($mh, $ch);
-    }
-    curl_multi_close($mh);
-    return $results;
-};
-
-// 5. REGISTRO DE RUTAS DINÁMICAS
-$route('GET', '/status', function() {
-    return ['status' => 'online', 'php_version' => PHP_VERSION, 'memory_usage' => memory_get_usage()];
-});
-
-$route('GET', '/data-mashup', function() use ($fetchParallel) {
-    // Simulamos traer datos de dos sitios distintos al mismo tiempo
-    $urls = [
-        'https://pokeapi.co',
-        'https://rickandmortyapi.com'
-    ];
-    $data = $fetchParallel($urls);
-    return [
-        'pokemon' => $data[0]['name'] ?? 'unknown',
-        'character' => $data[1]['name'] ?? 'unknown'
-    ];
-});
-
-// 6. EJECUCIÓN DEL ROUTER (DISPATCHER)
-$method = $_SERVER['REQUEST_METHOD'];
-$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$path = str_replace('/api', '', $path);
-
-try {
-    if (isset($router[$method][$path])) {
-        $response = $router[$method][$path]();
-    } else {
-        http_response_code(404);
-        $response = ['error' => 'Route not found', 'path' => $path];
-    }
-} catch (\Throwable $e) {
-    http_response_code(500);
-    $response = ['error' => $e->getMessage()];
+    return $svg . '</svg>';
 }
 
+// Cálculo de números primos (Stress Test para la CPU de Vercel)
+function getPrimes($limit) {
+    $primes = [];
+    for ($i = 2; $i < $limit; $i++) {
+        $count = 0;
+        for ($j = 1; $j <= $i; $j++) {
+            if ($i % $j == 0) $count++;
+        }
+        if ($count == 2) $primes[] = $i;
+    }
+    return $primes;
+}
 
-$response['meta'] = [
-    'execution_time_ms' => round((microtime(true) - $start) * 1000, 2),
-    'timestamp' => time()
-];
+// --- 3. LÓGICA DE CONTROL ---
+$action = $_GET['do'] ?? 'info';
+$value  = $_GET['val'] ?? 'Vercel';
 
-echo json_encode($response, JSON_PRETTY_PRINT);
+echo "<html><head><style>body{font-family:sans-serif;background:#f0f2f5;padding:40px;} .card{background:#fff;padding:20px;border-radius:10px;box-shadow:0 4px-6px rgba(0,0,0,0.1);max-width:600px;margin:auto;} code{background:#eee;padding:2px 5px;}</style></head><body>";
+echo "<div class='card'>";
+
+switch ($action) {
+    case 'stress':
+        $limit = (int)$value;
+        $p = getPrimes($limit > 5000 ? 5000 : $limit);
+        echo "<h2>Stress Test: Números Primos</h2>";
+        echo "Calculados los primos hasta $limit. Encontrados: " . count($p);
+        break;
+
+    case 'art':
+        echo "<h2>Arte Matemático Generativo</h2>";
+        echo generatePattern($value);
+        echo "<p>Semilla: <code>$value</code></p>";
+        break;
+
+    default:
+        echo "<h2>Consola Super-PHP en Vercel</h2>";
+        echo "<p>Este archivo es un sistema autónomo. Prueba estas rutas:</p>";
+        echo "<ul>
+                <li><a href='?do=stress&val=3000'>Stress Test (CPU)</a></li>
+                <li><a href='?do=art&val=".uniqid()."'>Generar Arte (SVG)</a></li>
+                <li><a href='?do=art&val=VercelRocks'>Arte con Semilla Fija</a></li>
+              </ul>";
+        break;
+}
+
+// --- 4. FOOTER (Métricas en tiempo real) ---
+$time = round((microtime(true) - $start) * 1000, 2);
+$mem = round(memory_get_usage() / 1024 / 1024, 2);
+echo "<hr><small>Ejecutado en <b>{$time}ms</b> | Memoria: <b>{$mem}MB</b> | PHP: <b>".PHP_VERSION."</b></small>";
+echo "</div></body></html>";
