@@ -1,65 +1,91 @@
+<?php
+// Función para generar las letras aleatorias en mayúsculas
+function generarLetras($longitud = 8) {
+    return substr(str_shuffle("ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $longitud);
+}
+
+// Variables para los enlaces
+$rnd = rand(10000, 99999);
+$letras = generarLetras(10);
+$query = "?rndval=$rnd&ALEATORIO=$letras";
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Documentación Oficial XLX</title>
+    <title>Documentación XLX</title>
     <style>
-        body { margin: 0; background: #1e1e1e; color: #ddd; font-family: sans-serif; line-height: 1.6; }
-        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
-        h1 { color: #4CAF50; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .tag-card { background: #252526; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #4CAF50; }
-        code { background: #333; color: #4ec9b0; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 1.1em; }
-        .ejemplo { background: #111; color: #abb2bf; padding: 15px; border-radius: 5px; margin-top: 10px; font-family: monospace; display: block; white-space: pre; }
+        /* Estilo Blanco Minimalista */
+        body { margin: 0; background: #ffffff; color: #1d1d1f; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        
+        header { 
+            background: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(10px); 
+            padding: 12px 40px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid #e5e5e5; 
+            position: sticky; 
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-box { display: flex; align-items: center; gap: 12px; text-decoration: none; color: #000; }
+        .logo-img { height: 35px; border-radius: 6px; }
+        .logo-txt { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+
+        nav { display: flex; align-items: center; gap: 30px; }
+        nav a { text-decoration: none; color: #515154; font-size: 14px; font-weight: 500; transition: 0.2s; }
+        nav a:hover { color: #000; }
+
+        .btn-editor { 
+            background: #000; 
+            color: #fff !important; 
+            padding: 8px 18px; 
+            border-radius: 20px; 
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .btn-editor:hover { transform: translateY(-1px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+
+        .content { max-width: 800px; margin: 60px auto; padding: 0 20px; }
+        h1 { font-size: 48px; font-weight: 800; letter-spacing: -1px; margin-bottom: 10px; }
+        .tag-info { border-bottom: 1px solid #f0f0f0; padding: 25px 0; }
+        code { background: #f5f5f7; color: #d70015; padding: 4px 8px; border-radius: 6px; font-family: "SF Mono", monospace; font-size: 0.9em; }
+        .ejemplo-box { background: #f9f9fb; border: 1px solid #eee; padding: 15px; border-radius: 10px; margin-top: 10px; color: #444; font-family: monospace; }
     </style>
 </head>
 <body>
 
-<header style="background: #111; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #4CAF50;">
-    <div style="display: flex; align-items: center; gap: 15px;">
-        <img src="/imagenes/logos/logo_1.png" alt="XLX" style="height: 40px; border-radius: 4px;">
-        <span style="font-size: 22px; font-weight: bold; letter-spacing: 1px;">XLX</span>
-    </div>
-    <nav style="display: flex; align-items: center; gap: 25px;">
-        <a href="/docus-xlx.php?rndval=<?php echo $rnd; ?>" style="color: #fff; text-decoration: none; font-size: 14px;">Documentación XLX</a>
-        <?php $rnd = rand(1000, 9999); ?>
-        <a href="/que-es.php?rndval=<?php echo $rnd; ?>" style="color: #bbb; text-decoration: none; font-size: 14px;">¿Qué es XLX?</a>
-        <a href="/diccionario.php?rndval=<?php echo $rnd; ?>" style="color: #bbb; text-decoration: none; font-size: 14px;">¿Qué es XLX?</a>
-        <a href="/prueba.php?rndval=<?php echo $rnd; ?>" style="background: #4CAF50; color: white; text-decoration: none; padding: 8px 16px; border-radius: 5px; font-weight: bold; font-size: 14px;">EDITOR XLX</a>
+<header>
+    <a href="/" class="logo-box">
+        <img src="/imagenes/logos/logo_1.png" class="logo-img" alt="Logo">
+        <span class="logo-txt">XLX</span>
+    </a>
+
+    <nav>
+        <a href="/docus-xlx.php<?php echo $query; ?>">Documentación</a>
+        <a href="/que-es.php<?php echo $query; ?>">¿Qué es?</a>
+        <a href="/prueba.php<?php echo $query; ?>" class="btn-editor">EDITOR XLX</a>
     </nav>
 </header>
 
-<div class="container">
-    <h1>Guía de Etiquetas XLX</h1>
-    <p>Aprende a programar tu web de forma sencilla y en español usando estas etiquetas:</p>
+<div class="content">
+    <h1>Guía XLX</h1>
+    <p style="font-size: 20px; color: #86868b;">Simplicidad absoluta en cada etiqueta.</p>
 
-    <div class="tag-card">
-        <strong>Etiqueta:</strong> <code>&lt;titulo&gt;...&lt;titulo&gt;</code><br>
-        <span>Define el título de la pestaña y crea un encabezado principal en la página.</span>
-        <div class="ejemplo">&lt;titulo&gt;Bienvenidos a mi web&lt;titulo&gt;</div>
+    <div class="tag-info">
+        <p><strong>Uso de Texto:</strong></p>
+        <code>&lt;texto&gt;Tu mensaje aquí&lt;texto&gt;</code>
+        <div class="ejemplo-box">&lt;texto&gt;Hola, esto es XLX&lt;texto&gt;</div>
     </div>
 
-    <div class="tag-card">
-        <strong>Etiqueta:</strong> <code>&lt;alerta&gt;...&lt;alerta&gt;</code><br>
-        <span>Muestra una ventana emergente de aviso al cargar la página.</span>
-        <div class="ejemplo">&lt;alerta&gt;¡Hola Mundo!&lt;alerta&gt;</div>
+    <div class="tag-info">
+        <p><strong>Alertas del Sistema:</strong></p>
+        <code>&lt;alerta&gt;Contenido&lt;alerta&gt;</code>
+        <div class="ejemplo-box">&lt;alerta&gt;Bienvenido al editor&lt;alerta&gt;</div>
     </div>
-
-    <div class="tag-card">
-        <strong>Etiqueta:</strong> <code>&lt;imagen&gt;...&lt;imagen&gt;</code><br>
-        <span>Inserta una imagen pasando el enlace directo.</span>
-        <div class="ejemplo">&lt;imagen&gt;https://mi-web.com;</div>
-    </div>
-
-    <div class="tag-card">
-        <strong>Etiqueta:</strong> <code>&lt;estilo_abrir&gt;...&lt;estilo_cerrar&gt;</code><br>
-        <span>Sección para cambiar el diseño. Usa <code>fondo=color</code> o <code>letra=tipo</code>.</span>
-        <div class="ejemplo">
-&lt;estilo_abrir&gt;
-fondo = black
-letra = Arial
-&lt;estilo_cerrar&gt;</div>
-    </div>
-
 </div>
 
 </body>
