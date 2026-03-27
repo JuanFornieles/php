@@ -1,33 +1,86 @@
 <?php
-session_start();
+// Configuración oculta en el backend
+$projectId = "proyectolegalescatrp";
+$error = "";
+$jsessionid_valido = null;
+$mostrar_boton = false;
 
-// 1. CONFIGURACIÓN: Usuarios "ocultos" (User => Password_Hash)
-// Generé estos hashes con password_hash('tu_password', PASSWORD_DEFAULT)
-$usuarios_registrados = [
-    'admin' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password: password
-    'usuario' => '$2y$10$M78.R7vJpIuR2v6vS5vB9.0L3yY/3M9q3Z2yY3Z2yY3Z2yY3Z2yY2' // password: 12345
-];
+// 1. LÓGICA DE LOGIN (POST)
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['usuario'])) {
+    $user_input = $_POST['usuario'];
+    $pass_input = $_POST['password'];
 
-// 2. LÓGICA DE LOGIN
-$error = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
-    $user = $_POST['user'] ?? '';
-    $pass = $_POST['pass'] ?? '';
+    // Consultamos el documento del usuario directamente en Firestore vía REST
+    $url = "https://firestore.googleapis.com/v1/projects/$projectId/databases/(default)/documents/usuarios/" . urlencode($user_input);
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
+    $data = json_decode($response, true);
+    curl_close($ch);
 
-    if (isset($usuarios_registrados[$user]) && password_verify($pass, $usuarios_registrados[$user])) {
-        $_SESSION['autenticado'] = $user;
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
+    if (isset($data['fields'])) {
+        $db_pass = $data['fields']['contrasena']['stringValue'] ?? '';
+        $db_jsession = $data['fields']['jsessionid']['stringValue'] ?? '';
+
+        if ($db_pass === $pass_input) {
+            // Si es correcto, recargamos con el parámetro en la URL como pediste
+            header("Location: index.php?compruebaUsuario=" . urlencode($db_jsession));
+            exit();
+        } else {
+            $error = "identificacion incorrecta";
+        }
     } else {
-        $error = "Usuario o contraseña incorrectos.";
+        $error = "identificacion incorrecta";
     }
 }
 
-// 3. LÓGICA DE LOGOUT
-if (isset($_GET['logout'])) {
-    session_destroy();
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit;
+// 2. LÓGICA DE VERIFICACIÓN (URL ?compruebaUsuario=...)
+if (isset($_GET['compruebaUsuario'])) {
+    $jsessionid_url = $_GET['compruebaUsuario'];
+
+    /* Para buscar por jsessionid, lo más eficiente es una consulta filtrada.
+       Aquí asumo que el jsessionid es único por usuario.
+    */
+    $queryUrl = "https://firestore.googleapis.com/v1/projects/$projectId/databases/(default)/documents:runQuery";
+    
+    $queryData = [
+        'structuredQuery' => [
+            'from' => [['collectionId' => 'usuarios']],
+            'where' => [
+                'fieldFilter' => [
+                    'field' => ['fieldPath' => 'jsessionid'],
+                    'op' => 'EQUAL',
+                    'value' => ['stringValue' => $jsessionid_url]
+                ]
+            ]
+        ]
+    ];
+
+    $ch = curl_init($queryUrl);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($queryData));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    $resQuery = curl_exec($ch);
+    $results = json_decode($resQuery, true);
+    curl_close($ch);
+
+    if (!empty($results) && isset($results[0]['document'])) {
+        $fields = $results[0]['document']['fields'];
+        
+        // Revisar el array de rolesUsuario buscando "cnp"
+        if (isset($fields['rolesUsuario']['arrayValue']['values'])) {
+            $roles = $fields['rolesUsuario']['arrayValue']['values'];
+            foreach ($roles as $rol) {
+                if ($rol['stringValue'] === "cnp") {
+                    $mostrar_boton = true;
+                    break;
+                }
+            }
+        }
+    }
 }
 ?>
 
@@ -35,30 +88,29 @@ if (isset($_GET['logout'])) {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>PHP Login Vercel</title>
+    <title>Acceso Privado</title>
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; padding-top: 50px; background: #f4f7f6; }
-        .box { background: white; padding: 2rem; border-radius: 8px; shadow: 0 2px 10px rgba(0,0,0,0.1); width: 300px; }
-        input { width: 100%; padding: 8px; margin: 10px 0; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background: #000; color: #fff; border: none; cursor: pointer; }
-        .error { color: red; font-size: 0.8rem; }
+        body { font-family: sans-serif; padding: 50px; text-align: center; }
+        .error { color: red; font-weight: bold; }
+        .btn-control { padding: 15px 25px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 20px; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <?php if (!isset($_SESSION['autenticado'])): ?>
-            <h2>Identifícate</h2>
-            <?php if ($error) echo "<p class='error'>$error</p>"; ?>
-            <form method="POST">
-                <input type="text" name="user" placeholder="Usuario" required>
-                <input type="password" name="pass" placeholder="Contraseña" required>
-                <button type="submit" name="login">Entrar</button>
-            </form>
-        <?php else: ?>
-            <h2>Bienvenido, <?php echo htmlspecialchars($_SESSION['autenticado']); ?></h2>
-            <p>Estás dentro de la zona segura en Vercel.</p>
-            <a href="?logout=1">Cerrar Sesión</a>
-        <?php endif; ?>
-    </div>
+
+    <?php if (!$mostrar_boton): ?>
+        <h2>Identificación de Usuario</h2>
+        <form method="POST" action="index.php">
+            <input type="text" name="usuario" placeholder="Usuario" required><br><br>
+            <input type="password" name="password" placeholder="Contraseña" required><br><br>
+            <button type="submit">Entrar</button>
+        </form>
+        <?php if ($error) echo "<p class='error'>$error</p>"; ?>
+    <?php else: ?>
+        <h2>Usuario Verificado</h2>
+        <p>Sesión activa: <strong><?php echo htmlspecialchars($_GET['compruebaUsuario']); ?></strong></p>
+        
+        <a href="/controlador.php" class="btn-control">Acceder a Controlador</a>
+    <?php endif; ?>
+
 </body>
 </html>
