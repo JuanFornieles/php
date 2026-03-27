@@ -1,7 +1,7 @@
 <?php
 $resultado_final = "";
 $doctype_obligatorio = "<!DOCTYPE XLX PUBLIC -- https://xlx.vercel.app -->";
-$codigo_usuario = isset($_POST['codigo']) ? $_POST['codigo'] : $doctype_obligatorio . "\n\n<titulo>Mi Web XLX</titulo>\n<texto>Escribe aquí en español</texto>";
+$codigo_usuario = isset($_POST['codigo']) ? $_POST['codigo'] : $doctype_obligatorio . "\n\n<titulo>Mi Web XLX<titulo>\n<estilo_abrir>\nfondo = #666666\nletra = Verdana\n<estilo_cerrar>\n<grande>Bienvenido a XLX<grande>\n<js_abre>\nalerta = \"esto es una alerta en js de xlx\"\nalert(alerta);\n<js_cierra>";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $code = $_POST['codigo'];
@@ -23,17 +23,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // 2️⃣ Procesar sección JS global (JS AMARILLO)
     $js = "";
-    if (preg_match_all('/<js_abrir>(.*?)<js_cerrar>/s', $code, $js_blocks)) {
+    if (preg_match_all('/<js_abre>(.*?)<js_cierra>/s', $code, $js_blocks)) {
         foreach ($js_blocks[1] as $bloque) { $js .= $bloque . "\n"; }
     }
 
-    // 3️⃣ Procesar etiquetas normales
+    // 3️⃣ Procesar etiquetas normales (Tu sintaxis <tag> contenido <tag>)
     preg_match_all('/<(\w+)>(.*?)<\1>/s', $code, $matches, PREG_SET_ORDER);
     
     $html_body = "";
     foreach ($matches as $m) {
         $tag = $m[1]; $content = $m[2];
-        if (in_array($tag, ["estilo_abrir", "estilo_cerrar", "js_abrir", "js_cerrar"])) continue;
+        if (in_array($tag, ["estilo_abrir", "estilo_cerrar", "js_abre", "js_cierra"])) continue;
         
         switch($tag) {
             case "titulo": $html_body .= "<title>$content</title><h1>$content</h1>\n"; break;
@@ -42,18 +42,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             case "grande": $html_body .= "<h1>$content</h1>\n"; break;
             case "texto_2": $html_body .= "<h2>$content</h2>\n"; break;
             case "texto_3": $html_body .= "<h3>$content</h3>\n"; break;
-            case "texto_inaudible": $html_body .= "<h4>$content</h4>\n"; break;
+            case "texto_inaudible": $html_body .= "<h6 style='font-size:8px'>$content</h6>\n"; break;
             case "imagen": $html_body .= "<img src='".trim($content)."' style='max-width:100%;'>\n"; break;
             case "boton":
                 if (strpos(trim($content), 'http') === 0) {
-                    $html_body .= "<button onclick=\"window.open('".trim($content)."', '_blank')\">$content</button>\n";
+                    $html_body .= "<button onclick=\"window.open('".trim($content)."', '_blank')\">Ir a Enlace</button>\n";
                 } else { $html_body .= "<button onclick=\"$content\">$content</button>\n"; }
                 break;
-            case "enlace_externo": $html_body .= "<a href='".trim($content)."' target='_blank'>$content</a>\n"; break;
-            case "alerta": $html_body .= "<script>alert('$content');</script>\n"; break;
-            case "muestra_estado": $html_body .= "<h2>Estado actual = funciona</h2>\n"; break;
-            case "division": $html_body .= "<br><br>\n"; break;
+            case "muestra_estado": $html_body .= "<h2>Estado actual = funciona si no sabes entra en <u>https://guia-xlx.vercel.app</u></h2>\n"; break;
+            case "division": $html_body .= "<br>\n"; break;
             case "separa_linea": $html_body .= "&nbsp;\n"; break;
+            case "alerta": $html_body .= "<script>alert('$content');</script>\n"; break;
         }
     }
 
@@ -68,14 +67,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="es" style="margin:0; height:100%; overflow:hidden;">
 <head>
     <meta charset="UTF-8">
-    <title>XLX Engine | Editor</title>
+    <title>XLX Studio Pro</title>
     <style>
         body { margin:0; height:100%; display:flex; flex-direction:column; background:#1e1e1e; font-family:sans-serif; }
         header { background:#333; color:white; padding:10px 20px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #444; }
         .editor-wrapper { position: relative; width: 50%; height: 100%; background: #1e1e1e; }
         #highlighting, #editing {
             margin: 0; padding: 20px; border: 0; width: 100%; height: 100%;
-            font-family: 'Consolas', monospace; font-size: 16px; line-height: 1.5;
+            font-family: 'Consolas', 'Monaco', monospace; font-size: 16px; line-height: 1.5;
             position: absolute; top: 0; left: 0; white-space: pre-wrap; word-wrap: break-word; box-sizing: border-box;
         }
         #editing { background: transparent; color: transparent; caret-color: white; resize: none; outline: none; z-index: 1; }
@@ -85,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .hl-tag { color: #4CAF50; font-weight: bold; }
         .hl-script { color: #FFEB3B; }
         .hl-css { color: #2196F3; }
-        .hl-error { background: rgba(244, 67, 54, 0.4); border-bottom: 2px solid #f44336; }
+        .hl-error { background: rgba(244, 67, 54, 0.5); border-bottom: 2px solid #f44336; }
         .hl-content { color: #ffffff; }
 
         button { background:#4CAF50; color:white; border:none; padding:8px 20px; cursor:pointer; border-radius:4px; font-weight:bold; }
@@ -95,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <header>
-        <span><b>XLX</b> | Editor en la Nube</span>
+        <span><b>XLX</b> | Lenguaje en Español</span>
         <button type="submit" form="editorForm">🚀 COMPILAR XLX</button>
     </header>
 
@@ -113,36 +112,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         function update(text) {
             let res = document.querySelector("#highlighting-content");
             let doctype = "<!DOCTYPE XLX PUBLIC -- https://xlx.vercel.app -->";
-            let lines = text.split('\n');
-            let finalContent = "";
+            
+            // Escapar texto
+            let content = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-            lines.forEach((line, index) => {
-                let currentLine = line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                
-                // Regla 1: Validar DOCTYPE en la línea 0
-                if(index === 0) {
-                    if(line.trim() === doctype.trim()) {
-                        finalContent += `<span class="hl-doctype">${currentLine}</span>\n`;
+            // 1. Resaltar bloques JS (AMARILLO)
+            content = content.replace(/(&lt;js_abre&gt;)([\s\S]*?)(&lt;js_cierra&gt;)/g, 
+                '<span class="hl-tag">$1</span><span class="hl-script">$2</span><span class="hl-tag">$3</span>');
+            
+            // 2. Resaltar bloques CSS (AZUL)
+            content = content.replace(/(&lt;estilo_abrir&gt;)([\s\S]*?)(&lt;estilo_cerrar&gt;)/g, 
+                '<span class="hl-tag">$1</span><span class="hl-css">$2</span><span class="hl-tag">$3</span>');
+
+            // 3. Resaltar Etiquetas normales (VERDE) y Contenido (BLANCO)
+            content = content.replace(/(&lt;(?!(js_abre|js_cierra|estilo_abrir|estilo_cerrar))\w+&gt;)([\s\S]*?)(&lt;\w+&gt;)/g, 
+                '<span class="hl-tag">$1</span><span class="hl-content">$3</span><span class="hl-tag">$4</span>');
+
+            // 4. Validar DOCTYPE y Errores de línea
+            let lines = content.split('\n');
+            let finalHTML = "";
+            lines.forEach((line, i) => {
+                if(i === 0) {
+                    if(line.includes("DOCTYPE XLX")) {
+                        finalHTML += `<span class="hl-doctype">${line}</span>\n`;
                     } else {
-                        finalContent += `<span class="hl-error">${currentLine}</span>\n`;
+                        finalHTML += `<span class="hl-error">${line}</span>\n`;
                     }
-                    return;
-                }
-
-                // Resaltado de bloques
-                if(currentLine.includes("&lt;js_abrir&gt;") || currentLine.includes("&lt;js_cerrar&gt;")) {
-                    currentLine = `<span class="hl-tag">${currentLine}</span>`;
-                } else if(currentLine.includes("&lt;estilo_abrir&gt;") || currentLine.includes("&lt;estilo_cerrar&gt;")) {
-                    currentLine = `<span class="hl-tag">${currentLine}</span>`;
                 } else {
-                    // Etiquetas normales
-                    currentLine = currentLine.replace(/(&lt;\w+&gt;)(.*?)(&lt;\w+&gt;)/g, '<span class="hl-tag">$1</span><span class="hl-content">$2</span><span class="hl-tag">$3</span>');
+                    finalHTML += line + "\n";
                 }
-                
-                finalContent += currentLine + "\n";
             });
 
-            res.innerHTML = finalContent;
+            res.innerHTML = finalHTML;
         }
 
         function sync_scroll(el) {
