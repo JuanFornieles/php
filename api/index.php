@@ -1,6 +1,6 @@
 <?php
 // Función para generar las letras aleatorias en mayúsculas
-function generarLetras($longitud = 8) {
+function generarLetras($longitud = 20) {
     return substr(str_shuffle("ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $longitud);
 }
 
