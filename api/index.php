@@ -61,7 +61,6 @@ $query = "?rndval=$rnd&ALEATORIO=$letras";
 <header>
     <a href="/" class="logo-box">
         <img src="/imagenes/logos/logo_1.png" class="logo-img" alt="Logo">
-        <span class="logo-txt">XLX</span>
     </a>
 
     <nav>
