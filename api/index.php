@@ -67,9 +67,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!DOCTYPE html>
 <html style="margin:0; height:100%; overflow:hidden;">
+    <TITILE>Ejecutor XLX</TITILE>
 <body style="margin:0; height:100%; display:flex; flex-direction:column; background:#1e1e1e; font-family:sans-serif;">
     <div style="background:#333; color:white; padding:10px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #444;">
-        <span><b>XLX Studio</b> - Motor PHP (Cloud Ready)</span>
+        <span><b>XLX</b>Motor para XLX (php)</span>
         <button type="submit" form="editorForm" style="background:#4CAF50; color:white; border:none; padding:8px 20px; cursor:pointer; border-radius:4px; font-weight:bold;">🚀 COMPILAR</button>
     </div>
     <form id="editorForm" method="post" style="display:flex; flex:1; margin:0;">
