@@ -5,7 +5,7 @@ function generarLetras($longitud = 8) {
 }
 
 // Variables para los enlaces
-$rnd = rand(10000, 99999);
+$rnd = rand(100000000, 999999999);
 $letras = generarLetras(10);
 $query = "?rndval=$rnd&ALEATORIO=$letras";
 ?>
