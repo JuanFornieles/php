@@ -20,10 +20,11 @@
         <span style="font-size: 22px; font-weight: bold; letter-spacing: 1px;">XLX</span>
     </div>
     <nav style="display: flex; align-items: center; gap: 25px;">
-        <a href="/docus-xlx.php?=<?php echo $rnd; ?>" style="color: #fff; text-decoration: none; font-size: 14px;">Documentación XLX</a>
+        <a href="/docus-xlx.php?rndval=<?php echo $rnd; ?>" style="color: #fff; text-decoration: none; font-size: 14px;">Documentación XLX</a>
         <?php $rnd = rand(1000, 9999); ?>
         <a href="/que-es.php?rndval=<?php echo $rnd; ?>" style="color: #bbb; text-decoration: none; font-size: 14px;">¿Qué es XLX?</a>
-        <a href="/prueba.php?rndval=<?php echo $rnd; ?>&ALEATORIO=<?php echo $rnd; ?>" style="background: #4CAF50; color: white; text-decoration: none; padding: 8px 16px; border-radius: 5px; font-weight: bold; font-size: 14px;">EDITOR XLX</a>
+        <a href="/diccionario.php?rndval=<?php echo $rnd; ?>" style="color: #bbb; text-decoration: none; font-size: 14px;">¿Qué es XLX?</a>
+        <a href="/prueba.php?rndval=<?php echo $rnd; ?>" style="background: #4CAF50; color: white; text-decoration: none; padding: 8px 16px; border-radius: 5px; font-weight: bold; font-size: 14px;">EDITOR XLX</a>
     </nav>
 </header>
 
