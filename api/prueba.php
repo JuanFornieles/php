@@ -53,7 +53,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             case "division": $html_body .= "<br>\n"; break;
             case "separa_linea": $html_body .= "&nbsp;\n"; break;
             case "alerta": $html_body .= "<script>alert('$content');</script>\n"; break;
-            case "define = ": $html_body .= "const ('$content') = "definicionUno""; break;
+            case "define": 
+                    if (strpos($content, '=') !== false) {
+                        list($nombre, $valor) = explode('=', $content);
+                    $html_body .= "<script>const " . trim($nombre) . " = '" . trim($valor) . "';</script>\n";
+                    }
+                        break;
+
         }
     }
 
