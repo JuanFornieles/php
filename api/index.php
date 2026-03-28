@@ -64,9 +64,9 @@ $query = "?rndval=$rnd&ALEATORIO=$letras";
     </a>
 
     <nav>
-        <a href="/docus-xlx.php<?php echo $query; ?>">Documentación</a>
-        <a href="/que-es.php<?php echo $query; ?>">¿Qué es?</a>
-        <a href="/prueba.php<?php echo $query; ?>" class="btn-editor">EDITOR XLX</a>
+        <a href="/docus-xlx.xlx<?php echo $query; ?>">Documentación</a>
+        <a href="/que-es.xlx<?php echo $query; ?>">¿Qué es?</a>
+        <a href="/prueba.xlx<?php echo $query; ?>" class="btn-editor">EDITOR XLX</a>
     </nav>
 </header>
 
