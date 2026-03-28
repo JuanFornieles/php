@@ -53,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             case "division": $html_body .= "<br>\n"; break;
             case "separa_linea": $html_body .= "&nbsp;\n"; break;
             case "alerta": $html_body .= "<script>alert('$content');</script>\n"; break;
+            case "define = ": $html_body .= "const ('$content') = "definicionUno""; break;
         }
     }
 
