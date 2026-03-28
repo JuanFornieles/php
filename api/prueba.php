@@ -1,7 +1,7 @@
 <?php
 $resultado_final = "";
 $doctype_obligatorio = "<!DOCTYPE XLX PUBLIC -- https://xlx.vercel.app -->";
-$codigo_usuario = isset($_POST['codigo']) ? $_POST['codigo'] : $doctype_obligatorio . "\n\n<titulo>Mi Web XLX<titulo>\n<estilo_abrir>\nfondo = #666666\nletra = Verdana\n<estilo_cerrar>\n<grande>Bienvenido a XLX<grande>\n<js_abre>\nalerta = \"esto es una alerta en js de xlx\"\nalert(alerta);\n<js_cierra>";
+$codigo_usuario = isset($_POST['codigo']) ? $_POST['codigo'] : $doctype_obligatorio . "\n\n<titulo>Mi Web XLX<titulo>\n<estilo_abrir>\nfondo = #666666\nletra = Verdana\nforma = circulo\n<estilo_cerrar>\n<grande>Bienvenido a XLX<grande>\n<js_abre>\nalert(\"¡Motor XLX Funcionando!\");\n<js_cierra>";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $code = $_POST['codigo'];
@@ -17,13 +17,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     if ($prop == "fondo") $css .= "body { background-color: $valor; }\n";
                     elseif ($prop == "letra") $css .= "body { font-family: $valor; }\n";
                     elseif ($prop == "forma") {
-                            if ($valor == "circulo") {
-                                $css .= "img, div { border-radius: 50%; width: 200px; height: 200px; object-fit: cover; }\n";
-                            } elseif ($valor == "cuadrado") {
-                                $css .= "img, div { border-radius: 0%; width: 200px; height: 200px; }\n";
-                            } elseif ($valor == "redondeado") {
-                                $css .= "img, div { border-radius: 20px; }\n";
-                            }
+                        if ($valor == "circulo") {
+                            $css .= "img, div { border-radius: 50%; width: 200px; height: 200px; object-fit: cover; border: 2px solid #000; }\n";
+                        } elseif ($valor == "cuadrado") {
+                            $css .= "img, div { border-radius: 0%; width: 200px; height: 200px; border: 2px solid #000; }\n";
+                        } elseif ($valor == "redondeado") {
+                            $css .= "img, div { border-radius: 20px; }\n";
                         }
                     }
                 }
@@ -37,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         foreach ($js_blocks[1] as $bloque) { $js .= $bloque . "\n"; }
     }
 
-    // 3️⃣ Procesar etiquetas normales (Tu sintaxis <tag> contenido <tag>)
+    // 3️⃣ Procesar etiquetas normales
     preg_match_all('/<(\w+)>(.*?)<\1>/s', $code, $matches, PREG_SET_ORDER);
     
     $html_body = "";
@@ -64,12 +63,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             case "separa_linea": $html_body .= "&nbsp;\n"; break;
             case "alerta": $html_body .= "<script>alert('$content');</script>\n"; break;
             case "define": 
-                    if (strpos($content, '=') !== false) {
-                        list($nombre, $valor) = explode('=', $content);
+                if (strpos($content, '=') !== false) {
+                    list($nombre, $valor) = explode('=', $content);
                     $html_body .= "<script>const " . trim($nombre) . " = '" . trim($valor) . "';</script>\n";
-                    }
-                        break;
-
+                }
+                break;
         }
     }
 
@@ -130,22 +128,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             let res = document.querySelector("#highlighting-content");
             let doctype = "<!DOCTYPE XLX PUBLIC -- https://xlx.vercel.app -->";
             
-            // Escapar texto
             let content = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-            // 1. Resaltar bloques JS (AMARILLO)
             content = content.replace(/(&lt;js_abre&gt;)([\s\S]*?)(&lt;js_cierra&gt;)/g, 
                 '<span class="hl-tag">$1</span><span class="hl-script">$2</span><span class="hl-tag">$3</span>');
             
-            // 2. Resaltar bloques CSS (AZUL)
             content = content.replace(/(&lt;estilo_abrir&gt;)([\s\S]*?)(&lt;estilo_cerrar&gt;)/g, 
                 '<span class="hl-tag">$1</span><span class="hl-css">$2</span><span class="hl-tag">$3</span>');
 
-            // 3. Resaltar Etiquetas normales (VERDE) y Contenido (BLANCO)
             content = content.replace(/(&lt;(?!(js_abre|js_cierra|estilo_abrir|estilo_cerrar))\w+&gt;)([\s\S]*?)(&lt;\w+&gt;)/g, 
                 '<span class="hl-tag">$1</span><span class="hl-content">$3</span><span class="hl-tag">$4</span>');
 
-            // 4. Validar DOCTYPE y Errores de línea
             let lines = content.split('\n');
             let finalHTML = "";
             lines.forEach((line, i) => {
@@ -159,7 +152,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     finalHTML += line + "\n";
                 }
             });
-
             res.innerHTML = finalHTML;
         }
 
