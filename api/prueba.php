@@ -23,6 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 $css .= "img, div { border-radius: 0%; width: 200px; height: 200px; }\n";
                             } elseif ($valor == "redondeado") {
                                 $css .= "img, div { border-radius: 20px; }\n";
+                            }
+                        }
+                    }
                 }
             }
         }
