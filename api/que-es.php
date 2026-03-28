@@ -53,6 +53,7 @@ Fecha = 20/01/2024
             <p>XLX es un intérprete (traductor) de código que interpreta a HTML, css y un poco de JavaScript de manera simple.</p>
             <p>Las principales funciones de este son las nombradas aquí: </p>
     <DIV align="left">
+    <B>
   <SMALL> 1. Aprender HTML rápido </SMALL>
     <BR>
     <BR>
@@ -62,6 +63,7 @@ Fecha = 20/01/2024
   <SMALL> 3. Poder interpretar el código y posteriormente copiarlo para usarlo en tu web sin saber HTM </SMALL>
     <BR>
     <BR>
+    </B>
     </DIV>
     
             <p> 
