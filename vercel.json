@@ -6,27 +6,13 @@
   },
   "routes": [
     {
-      "src": "/",
-      "dest": "/api/index.php"
-    },
-
-    // 🔹 RUTAS TIPO RAYUELA (bonitas y ocultas)
-    {
       "src": "/index.xlx",
       "dest": "/api/index.php"
     },
     {
-      "src": "/prueba.xlx",
-      "dest": "/api/prueba.php"
-    },
-
-    // 🔹 OPCIONAL: cualquier ruta .rayuela dinámica
-    {
       "src": "/(.*)\\.xlx",
       "dest": "/api/$1.php"
     },
-
-    // 🔹 OCULTAR ACCESO DIRECTO A .php
     {
       "src": "/(.*)\\.php",
       "status": 404
