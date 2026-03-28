@@ -41,6 +41,8 @@ Fecha = 20/01/2024
         text-align: center;
         padding: 20px;
     }
+    .listadoConSinCabeceraOConSinOlvidoSinFuncionMotora
+        text-align:  
 </STYLE>
 </HEAD>
 <body>
@@ -50,6 +52,7 @@ Fecha = 20/01/2024
             <h1>¿Qué es XLX?</h1>
             <p>XLX es un intérprete (traductor) de código que interpreta a HTML, css y un poco de JavaScript de manera simple.</p>
             <p>Las principales funciones de este son las nombradas aquí: </p>
+    <DIV align="left">
   <SMALL> 1. Aprender HTML rápido </SMALL>
     <BR>
     <BR>
@@ -59,6 +62,7 @@ Fecha = 20/01/2024
   <SMALL> 3. Poder interpretar el código y posteriormente copiarlo para usarlo en tu web sin saber HTM </SMALL>
     <BR>
     <BR>
+    </DIV>
     
             <p> 
         </div>
