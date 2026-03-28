@@ -16,6 +16,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $prop = trim($prop); $valor = trim($valor);
                     if ($prop == "fondo") $css .= "body { background-color: $valor; }\n";
                     elseif ($prop == "letra") $css .= "body { font-family: $valor; }\n";
+                    elseif ($prop == "forma") {
+                            if ($valor == "circulo") {
+                                $css .= "img, div { border-radius: 50%; width: 200px; height: 200px; object-fit: cover; }\n";
+                            } elseif ($valor == "cuadrado") {
+                                $css .= "img, div { border-radius: 0%; width: 200px; height: 200px; }\n";
+                            } elseif ($valor == "redondeado") {
+                                $css .= "img, div { border-radius: 20px; }\n";
                 }
             }
         }
